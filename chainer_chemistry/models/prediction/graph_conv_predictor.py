@@ -41,9 +41,11 @@ class GraphConvPredictor(chainer.Chain):
             self.label_scaler = label_scaler
         self.postprocess_fn = postprocess_fn or chainer.functions.identity
 
-    def __call__(self, atoms, adjs, super_node=None):
+    def __call__(self, atoms, adjs=None, super_node=None):
         # type: (numpy.ndarray, numpy.ndarray) -> chainer.Variable
-        if super_node is None:
+        if adjs is None:
+            x = self.graph_conv(atoms)
+        elif super_node is None:
             x = self.graph_conv(atoms, adjs)
         else:
             x = self.graph_conv(atoms, adjs, super_node=super_node)
