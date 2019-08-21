@@ -162,14 +162,17 @@ def main():
 
     # Set up the trainer.
     trainer = training.Trainer(updater, (args.epoch, 'epoch'), out=args.out)
-    trainer.extend(E.Evaluator(valid_iter, regressor, device=device,
-                               converter=RelGCNSparseGraph.sparse_converter))
+    evaluator = E.Evaluator(valid_iter, regressor, device=device,
+                            converter=RelGCNSparseGraph.sparse_converter)
+    trainer.extend(evaluator)
     trainer.extend(E.snapshot(), trigger=(args.epoch, 'epoch'))
     trainer.extend(E.LogReport())
     trainer.extend(E.PrintReport([
         'epoch', 'main/loss', 'main/mae', 'main/rmse', 'validation/main/loss',
         'validation/main/mae', 'validation/main/rmse', 'elapsed_time']))
     trainer.extend(E.ProgressBar())
+
+    print(evaluator())
     trainer.run()
 
     # Save the regressor's parameters.
