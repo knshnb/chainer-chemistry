@@ -89,7 +89,7 @@ def set_up_predictor(
         conv = RelGCN(
             out_dim=n_unit,
             n_edge_types=num_edge_type,
-            scale_adj=True,
+            scale_adj=False,
             **conv_kwargs)
     elif method == 'relgat':
         print('Set up Relational GAT predictor...')
