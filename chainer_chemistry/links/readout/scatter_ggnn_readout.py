@@ -37,7 +37,7 @@ class ScatterGGNNReadout(chainer.Chain):
 
     def __call__(self, h, batch, h0=None, is_real_node=None):
         # --- Readout part ---
-        h1 = functions.concat((h, h0), axis=2) if h0 is not None else h
+        h1 = functions.concat((h, h0), axis=1) if h0 is not None else h
 
         g1 = functions.sigmoid(self.i_layer(h1))
         g2 = self.activation(self.j_layer(h1))
