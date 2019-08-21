@@ -47,17 +47,17 @@ class SparseGraph(object):
         return batch
 
     def to_device(self, device):
-        device.send(self.x)
-        device.send(self.edge_index)
-        device.send(self.y)
-        device.send(self.batch)
+        self.x = device.send(self.x)
+        self.edge_index = device.send(self.edge_index)
+        self.y = device.send(self.y)
+        self.batch = device.send(self.batch)
         return self
 
     @classmethod
     def sparse_converter_sub(cls, graph_list, device):
         labels = np.array([graph.y for graph in graph_list], dtype=np.float32)
-        device.send(labels)
-        return cls.list_to_batch(graph_list).to_device(device), labels
+        return cls.list_to_batch(graph_list).to_device(
+            device), device.send(labels)
 
     @staticmethod
     @chainer.dataset.converter()

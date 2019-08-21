@@ -130,7 +130,7 @@ def main():
         print('No standard scaling was selected.')
         scaler = None
 
-    dataset = RelGCNSparseGraph.dataset_from_dense(dataset[:256])
+    dataset = RelGCNSparseGraph.dataset_from_dense(dataset)
 
     # Split the dataset into training and validation.
     train_data_size = int(len(dataset) * args.train_data_ratio)

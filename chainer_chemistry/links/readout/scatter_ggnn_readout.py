@@ -44,6 +44,7 @@ class ScatterGGNNReadout(chainer.Chain):
         g = g1 * g2
 
         # sum along node axis
-        y = self.xp.zeros((batch[-1] + 1, self.out_dim), dtype=numpy.float32)
+        y = self.xp.zeros((int(batch[-1]) + 1, self.out_dim),
+                          dtype=numpy.float32)
         y = functions.scatter_add(y, batch, g)
         return self.activation_agg(y)

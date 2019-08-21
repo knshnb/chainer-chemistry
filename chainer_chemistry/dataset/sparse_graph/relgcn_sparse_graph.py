@@ -17,7 +17,7 @@ class RelGCNSparseGraph(SparseGraph):
 
     def to_device(self, device):
         super(RelGCNSparseGraph, self).to_device(device)
-        device.send(self.edge_attr)
+        self.edge_attr = device.send(self.edge_attr)
         return self
 
     @staticmethod
