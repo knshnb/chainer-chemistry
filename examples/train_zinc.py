@@ -29,12 +29,11 @@ def parse_arguments():
     # Lists of supported preprocessing methods/models.
     method_list = ['nfp', 'ggnn', 'schnet', 'weavenet', 'rsgcn', 'relgcn',
                    'relgat']
-    label_names = ['A', 'B', 'C', 'mu', 'alpha', 'homo', 'lumo', 'gap', 'r2',
-                   'zpve', 'U0', 'U', 'H', 'G', 'Cv']
+    label_names = ['logP', 'qed', 'SAS']
     scale_list = ['standardize', 'none']
 
     # Set up the argument parser.
-    parser = argparse.ArgumentParser(description='Regression on QM9.')
+    parser = argparse.ArgumentParser(description='Regression on ZINC.')
     parser.add_argument('--method', '-m', type=str, choices=method_list,
                         default='nfp', help='method name')
     parser.add_argument('--label', '-l', type=str,
@@ -83,7 +82,7 @@ def main():
     else:
         labels = None
         cache_dir = os.path.join('input', '{}_all'.format(method))
-        class_num = len(D.get_qm9_label_names())
+        class_num = len(D.get_zinc250k_label_names())
 
     # Get the filename corresponding to the cached dataset, based on the amount
     # of data samples that need to be parsed from the original dataset.
@@ -107,11 +106,11 @@ def main():
         if num_data >= 0:
             # Select the first `num_data` samples from the dataset.
             target_index = numpy.arange(num_data)
-            dataset = D.get_qm9(preprocessor, labels=labels,
-                                target_index=target_index)
+            dataset = D.get_zinc250k(
+                preprocessor, labels=labels, target_index=target_index)
         else:
             # Load the entire dataset.
-            dataset = D.get_qm9(preprocessor, labels=labels)
+            dataset = D.get_zinc250k(preprocessor, labels=labels)
 
         # Cache the laded dataset.
         if not os.path.exists(cache_dir):

@@ -20,6 +20,9 @@ from chainer_chemistry.models.gwm.gwm_net import GIN_GWM  # NOQA
 from chainer_chemistry.models.gwm.gwm_net import NFP_GWM  # NOQA
 from chainer_chemistry.models.gwm.gwm_net import RSGCN_GWM  # NOQA
 
+from chainer_chemistry.models.simple_relgcn_sparse import SimpleRelGCNSparse
+from chainer_chemistry.models.relgcn_sparse import RelGCNSparse
+
 
 def set_up_predictor(
         method,  # type: str
@@ -86,7 +89,7 @@ def set_up_predictor(
         conv = RelGCN(
             out_dim=n_unit,
             n_edge_types=num_edge_type,
-            scale_adj=True,
+            scale_adj=False,
             **conv_kwargs)
     elif method == 'relgat':
         print('Set up Relational GAT predictor...')
@@ -126,6 +129,20 @@ def set_up_predictor(
     elif method == 'gin_gwm':
         print('Set up GIN_GWM predictor...')
         conv = GIN_GWM(
+            out_dim=n_unit,
+            hidden_channels=n_unit,
+            n_update_layers=conv_layers,
+            **conv_kwargs)
+    elif method == 'simplerelgcn_sparse':
+        print('Set up SimpleRelGCNSparse predictor...')
+        conv = SimpleRelGCNSparse(
+            out_dim=n_unit,
+            hidden_channels=n_unit,
+            n_update_layers=conv_layers,
+            **conv_kwargs)
+    elif method == 'relgcn_sparse':
+        print('Set up RelGCNSparse predictor...')
+        conv = RelGCNSparse(
             out_dim=n_unit,
             hidden_channels=n_unit,
             n_update_layers=conv_layers,

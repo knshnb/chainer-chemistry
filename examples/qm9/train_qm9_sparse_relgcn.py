@@ -12,10 +12,10 @@ from chainer import optimizers
 from chainer import training
 from chainer.training import extensions as E
 
-from chainer_chemistry.dataset.converters import concat_mols
 from chainer_chemistry.dataset.preprocessors import preprocess_method_dict
 from chainer_chemistry import datasets as D
 from chainer_chemistry.datasets import NumpyTupleDataset
+from chainer_chemistry.dataset.sparse_graph.relgcn_sparse_graph import RelGCNSparseGraph
 from chainer_chemistry.links.scaler.standard_scaler import StandardScaler
 from chainer_chemistry.models.prediction import Regressor
 from chainer_chemistry.models.prediction import set_up_predictor
@@ -75,7 +75,10 @@ def main():
     args = parse_arguments()
 
     # Set up some useful variables that will be used later on.
-    method = args.method
+    # method = args.method
+    # 一時的にdatasetを取得するためにdenseのrelgcnを使用
+    method = 'relgcn'
+
     if args.label != 'all':
         labels = args.label
         cache_dir = os.path.join('input', '{}_{}'.format(method, labels))
@@ -127,12 +130,14 @@ def main():
         print('No standard scaling was selected.')
         scaler = None
 
+    dataset = RelGCNSparseGraph.dataset_from_dense(dataset)
+
     # Split the dataset into training and validation.
     train_data_size = int(len(dataset) * args.train_data_ratio)
     train, valid = split_dataset_random(dataset, train_data_size, args.seed)
 
     # Set up the predictor.
-    predictor = set_up_predictor(method, args.unit_num, args.conv_layers,
+    predictor = set_up_predictor('relgcn_sparse', args.unit_num, args.conv_layers,
                                  class_num, scaler)
 
     # Set up the iterators.
@@ -151,13 +156,14 @@ def main():
     optimizer.setup(regressor)
 
     # Set up the updater.
-    updater = training.StandardUpdater(train_iter, optimizer, device=device,
-                                       converter=concat_mols)
+    updater = training.StandardUpdater(
+        train_iter, optimizer, device=device,
+        converter=RelGCNSparseGraph.sparse_converter)
 
     # Set up the trainer.
     trainer = training.Trainer(updater, (args.epoch, 'epoch'), out=args.out)
     evaluator = E.Evaluator(valid_iter, regressor, device=device,
-                            converter=concat_mols)
+                            converter=RelGCNSparseGraph.sparse_converter)
     trainer.extend(evaluator)
     trainer.extend(E.snapshot(), trigger=(args.epoch, 'epoch'))
     trainer.extend(E.LogReport())
