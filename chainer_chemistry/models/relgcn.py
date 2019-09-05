@@ -5,6 +5,7 @@ from chainer.links import Linear
 from chainer_chemistry.config import MAX_ATOMIC_NUM
 from chainer_chemistry.links.readout.scatter_ggnn_readout import ScatterGGNNReadout  # NOQA
 from chainer_chemistry.links import EmbedAtomID, GraphLinear
+from chainer_chemistry.links.readout.general_readout import ScatterGeneralReadout  # NOQA
 from chainer_chemistry.links.readout.ggnn_readout import GGNNReadout
 from chainer_chemistry.links.update.relgcn_update \
     import RelGCNUpdate, RelGCNSparseUpdate
@@ -150,9 +151,10 @@ class RelGCNSparse(chainer.Chain):
                 RelGCNSparseUpdate(hidden_channels[i], hidden_channels[i + 1],
                                    n_edge_types)
                 for i in range(len(hidden_channels) - 1)])
-            self.rgcn_readout = ScatterGGNNReadout(
-                out_dim=out_dim, in_channels=hidden_channels[-1],
-                nobias=True, activation=functions.tanh)
+            self.rgcn_readout = ScatterGeneralReadout(mode='sum')
+            # self.rgcn_readout = ScatterGGNNReadout(
+            #     out_dim=out_dim, in_channels=hidden_channels[-1],
+            #     nobias=True, activation=functions.tanh)
         # self.num_relations = num_edge_type
         self.input_type = input_type
         self.scale_adj = scale_adj
