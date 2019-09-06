@@ -14,6 +14,7 @@ from chainer_chemistry.models.relgcn import RelGCN, RelGCNSparse
 from chainer_chemistry.models.rsgcn import RSGCN
 from chainer_chemistry.models.schnet import SchNet
 from chainer_chemistry.models.weavenet import WeaveNet
+from chainer_chemistry.models.readout_only import ReadoutGCNSparse
 
 from chainer_chemistry.models.gwm.gwm_net import GGNN_GWM  # NOQA
 from chainer_chemistry.models.gwm.gwm_net import GIN_GWM  # NOQA
@@ -140,6 +141,13 @@ def set_up_predictor(
     elif method == 'gin_sparse':
         print('Set up GIN predictor...')
         conv = GINSparse(
+            out_dim=n_unit,
+            hidden_channels=n_unit,
+            n_update_layers=conv_layers,
+            **conv_kwargs)
+    elif method == 'readout_sparse':
+        print('Set up ReadoutGCNSparse predictor...')
+        conv = ReadoutGCNSparse(
             out_dim=n_unit,
             hidden_channels=n_unit,
             n_update_layers=conv_layers,

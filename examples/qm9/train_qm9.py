@@ -26,7 +26,8 @@ def rmse(x0, x1):
 def parse_arguments():
     # Lists of supported preprocessing methods/models.
     method_list = ['nfp', 'ggnn', 'schnet', 'weavenet', 'rsgcn', 'relgcn',
-                   'relgat', 'gin', 'relgcn_sparse', 'gin_sparse']
+                   'relgat', 'gin', 'relgcn_sparse', 'gin_sparse',
+                   'readout_sparse']
     label_names = ['A', 'B', 'C', 'mu', 'alpha', 'homo', 'lumo', 'gap', 'r2',
                    'zpve', 'U0', 'U', 'H', 'G', 'Cv']
     scale_list = ['standardize', 'none']

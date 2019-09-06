@@ -37,4 +37,5 @@ preprocess_method_dict = {
     'relgat': RelGATPreprocessor,
     'relgcn_sparse': RelGCNSparsePreprocessor,
     'gin_sparse': GINSparsePreprocessor,
+    'readout_sparse': RelGCNSparsePreprocessor,
 }
